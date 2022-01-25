@@ -3,3 +3,9 @@
 !/data/model
 /data/model/*
 !/data/model/.gitkeep
+
+# Environment variables
+/local.env
+
+# Node.js
+/node_modules/*
