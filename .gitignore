@@ -5,7 +5,7 @@
 !/data/model/.gitkeep
 
 # Environment variables
-/local.env
+/.env
 
 # Node.js
 /node_modules/*
