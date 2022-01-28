@@ -1,0 +1,24 @@
+{
+  "name": "evs-sip-gdc-loader",
+  "version": "1.0.0",
+  "description": "Loads GDC data into Neo4j for EVS-SIP",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "evs-sip",
+    "nih",
+    "nci",
+    "cbiit",
+    "gdc",
+    "data-commons"
+  ],
+  "author": "Joon Lee",
+  "dependencies": {
+    "dotenv": "^14.3.2",
+    "js-yaml": "^4.1.0",
+    "neo4j-driver": "^4.4.1"
+  }
+}
