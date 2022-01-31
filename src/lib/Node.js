@@ -1,3 +1,5 @@
+import nodeMap from '../mappings/nodeMap.js';
+
 /**
  * Corresponds to a Node in MDB's model
  * 
@@ -14,9 +16,8 @@ export default class Node {
   nanoid = null;
 
   constructor(props) {
-    this.desc = props.desc ?? null;
-    this.handle = props.handle ?? null;
-    this.model = props.model ?? null;
-    this.nanoid = props.nanoid ?? null;
+    for (const prop in nodeMap) {
+      this[prop] = props[prop] ?? null;
+    }
   };
 };

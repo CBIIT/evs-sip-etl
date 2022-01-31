@@ -9,8 +9,8 @@ import load from './load.js';
 
 const main = () => {
   extract();
-  transform();
-  load();
+  //transform();
+  //load();
 };
 
 export default main;
