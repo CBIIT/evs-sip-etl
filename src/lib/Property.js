@@ -10,25 +10,25 @@
  * @property {UNKNOWN} units UNKNOWN
  * @property {UNKNOWN} value_domain UNKNOWN
  */
-export default Property = class {
+export default class Property {
   // Private instance properties
-  #desc = null;
-  #handle = null;
-  #isRequired = false;
-  #model = null;
-  #nanoid = null;
-  #pattern = null;
-  #units = null;
-  #valueDomain = null;
+  desc = null;
+  handle = null;
+  isRequired = false;
+  model = null;
+  nanoid = null;
+  pattern = null;
+  units = null;
+  valueDomain = null;
 
   constructor(desc, handle, isRequired, model, nanoid, pattern, units, valueDomain) {
-    this.#desc = desc;
-    this.#handle = handle;
-    this.#isRequired = isRequired;
-    this.#model = model;
-    this.#nanoid = nanoid;
-    this.#pattern = pattern;
-    this.#units = units;
-    this.#valueDomain = valueDomain;
+    this.desc = desc;
+    this.handle = handle;
+    this.isRequired = isRequired;
+    this.model = model;
+    this.nanoid = nanoid;
+    this.pattern = pattern;
+    this.units = units;
+    this.valueDomain = valueDomain;
   };
 };

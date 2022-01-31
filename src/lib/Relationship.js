@@ -8,21 +8,21 @@
  * @property {string} multiplicity One to many, many to one, etc.
  * @property {string} nanoid The Relationship's identifier
  */
-export default Relationship = class {
+export default class Relationship {
   // Private instance properties
-  #desc = null;
-  #handle = null;
-  #isRequired = false;
-  #model = null;
-  #multiplicity = 'many_to_many';
-  #nanoid = null;
+  desc = null;
+  handle = null;
+  isRequired = false;
+  model = null;
+  multiplicity = 'many_to_many';
+  nanoid = null;
 
   constructor(desc, handle, isRequired, model, multiplicity, nanoid) {
-    this.#desc = desc;
-    this.#handle = handle;
-    this.#isRequired = isRequired;
-    this.#multiplicity = multiplicity;
-    this.#model = model;
-    this.#nanoid = nanoid;
+    this.desc = desc;
+    this.handle = handle;
+    this.isRequired = isRequired;
+    this.multiplicity = multiplicity;
+    this.model = model;
+    this.nanoid = nanoid;
   };
 };
