@@ -6,6 +6,9 @@ import nodeMap from './mappings/nodeMap.js';
 import Property from './lib/Property.js';
 import Relationship from './lib/Relationship.js';
 
+/**
+ * Extracts data from dictionary files
+ */
 const extract = () => {
   const dataDir = process.env.DATA_DIR;
   let filepaths = [];
@@ -21,7 +24,6 @@ const extract = () => {
     }, {});
     const node = new Node(nodeProps);
 
-    console.log(parsedFile);
     console.log(node);
   });
 };

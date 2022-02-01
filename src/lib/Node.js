@@ -1,4 +1,5 @@
 import nodeMap from '../mappings/nodeMap.js';
+import generateNanoId from './generateNanoId.js';
 
 /**
  * Corresponds to a Node in MDB's model
@@ -12,12 +13,12 @@ export default class Node {
   // Private instance properties
   desc = null;
   handle = null;
-  model = null;
-  nanoid = null;
+  model = 'gdc';
+  nanoid = generateNanoId();
 
   constructor(props) {
     for (const prop in nodeMap) {
-      this[prop] = props[prop] ?? null;
+      this[prop] = props[prop] ?? this[prop] ?? null;
     }
   };
 };
