@@ -4,7 +4,6 @@
 const nodeMap = {
   desc: 'description',
   handle: 'title',
-  model: 'gdc',
   nanoid: 'nanoid'
 };
 

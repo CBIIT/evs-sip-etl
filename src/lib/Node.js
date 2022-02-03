@@ -18,6 +18,11 @@ export default class Node {
   model = 'gdc';
   nanoid = generateNanoId();
 
+  /**
+   * Constructor
+   * 
+   * @param {Object} props Collection of properties mapped to values
+   */
   constructor(props) {
     for (const prop in nodeMap) {
       this[prop] = props[prop] ?? this[prop] ?? null;
