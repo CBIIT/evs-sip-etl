@@ -1,11 +1,15 @@
+# Environment variables
+/.env
+
 # Data files to be imported
 /data/*
 !/data/model
 /data/model/*
 !/data/model/.gitkeep
 
-# Environment variables
-/.env
+# Logs
+/logs/*
+!/logs/.gitkeep
 
 # Node.js
 /node_modules/*
