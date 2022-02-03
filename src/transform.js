@@ -9,7 +9,7 @@ const transform = (parsedFile) => {
   let transformedData = {
     nodes: [],
     properties: [],
-    relationsihps: [],
+    relationships: [],
   };
   // Build MDB Node
   const nodeProps = buildProps(nodeMap, parsedFile);
