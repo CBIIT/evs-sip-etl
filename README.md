@@ -49,6 +49,15 @@ In a terminal, run the command `node index.js` or `npm run test`.
 
 `mappings` contains files defining the YAML fields that match corresponding MDB fields. If the fieldset of a YAML file changes, then edit the corresponding mapping in `mappings` instead of editing the constructor of MDB classes in `lib`.
 
+## Glossary
+
+Below is a glossary of terminology used in this project's README and code:
+
+| Term | Definition |
+| ---- | ---------- |
+| MDB node | Any node (whether it's labeled "property", "relationship", "node", etc.) in the MDB model |
+| MDB Node | A node labeled "node" in the MDB model |
+
 ## Learn More
 
 - [Bento Metadatabase structure](https://github.com/CBIIT/bento-meta/blob/master/metamodel.svg)
