@@ -6,6 +6,7 @@ import generateNanoId from './generateNanoId.js';
  * 
  * @property {string} desc A description of the Node
  * @property {string} handle The name of the Node
+ * @property {string} label Identifies this as an MDB node in Neo4j
  * @property {string} model The data commons that the Node is from
  * @property {string} nanoid The Node's identifier
  */
@@ -13,6 +14,7 @@ export default class Node {
   // Private instance properties
   desc = null;
   handle = null;
+  label = 'node';
   model = 'gdc';
   nanoid = generateNanoId();
 

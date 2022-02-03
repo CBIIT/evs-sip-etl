@@ -4,6 +4,7 @@
  * @property {string} desc A description of the Property
  * @property {string} handle The name of the Property
  * @property {bool} isRequired Whether or not the Property is required
+ * @property {string} label Identifies this as an MDB property in Neo4j
  * @property {string} model The data commons that the Property is from
  * @property {string} nanoid The Property's identifier
  * @property {UNKNOWN} pattern UNKNOWN
@@ -15,6 +16,7 @@ export default class Property {
   desc = null;
   handle = null;
   isRequired = false;
+  label = 'property';
   model = null;
   nanoid = null;
   pattern = null;
