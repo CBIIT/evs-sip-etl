@@ -6,11 +6,18 @@ import nodeMap from './mappings/nodeMap.js';
  * Builds MDB nodes from the Object representation of YAML data
  */
 const transform = (parsedFile) => {
+  let transformedData = {
+    nodes: [],
+    properties: [],
+    relationsihps: [],
+  };
   // Build MDB Node
   const nodeProps = buildProps(nodeMap, parsedFile);
   const node = new Node(nodeProps);
 
-  console.log(node);
+  transformedData.nodes.push(node);
+
+  return transformedData;
 };
 
 /**

@@ -4,23 +4,17 @@ import extract from './extract.js';
 import transform from './transform.js';
 import load from './load.js';
 
-/*
-import transform from './transform.js';
-import load from './load.js';
-*/
-
 const main = () => {
   const filePaths = filesGenerator();
 
   // Go through each file
   for (const filePath of filePaths) {
     const parsedFile = extract(filePath);
-    transform(parsedFile);
+    const transformedData = transform(parsedFile);
+    //load();
+    console.log(transformedData);
     return;
   }
-
-  //transform();
-  //load();
 };
 
 /**
