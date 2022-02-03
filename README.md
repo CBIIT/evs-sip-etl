@@ -45,6 +45,12 @@ In a terminal, run the command `node index.js` or `npm run test`.
 
 `src/main.js` coordinates the extraction, transformation, and loading of data.
 
+`src/extract.js` generates an Object representation of a YAML file.
+
+`src/transform.js` constructs MDB nodes from the extracted data.
+
+`src/load.js` loads the Neo4j data with the transformed data.
+
 `lib` contains classes that represent nodes in the Bento MDB model.
 
 `mappings` contains files defining the YAML fields that match corresponding MDB fields. If the fieldset of a YAML file changes, then edit the corresponding mapping in `mappings` instead of editing the constructor of MDB classes in `lib`.
