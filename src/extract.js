@@ -1,51 +1,35 @@
 import fs from 'fs';
-import path from 'path';
 import yaml from 'js-yaml';
-import Node from './lib/Node.js';
-import nodeMap from './mappings/nodeMap.js';
-import Property from './lib/Property.js';
-import Relationship from './lib/Relationship.js';
 
 /**
- * Extracts data from dictionary files
+ * Generates an Object representation of a YAML dictionary file
  */
-const extract = () => {
-  const dataDir = process.env.DATA_DIR;
-  let filepaths = [];
+const extract = (filePath) => {
+  const parsedFile = extractFile(filePath);
 
-  filepaths = [`${dataDir}${path.sep}aligned_reads.yaml`];
+  // Skip invalid files
+  if (!isValid(parsedFile)) {
+    // Log the incident
+    // stub
 
-  filepaths.forEach(path => {
-    const parsedFile = extractFile(path);
+    return;
+  }
 
-    // Skip invalid files
-    if (!isValid(parsedFile)) {
-      // Log the incident
-      // stub
-
-      return;
-    }
-
-    // Build MDB node
-    const nodeProps = buildProps(nodeMap, parsedFile);
-    const node = new Node(nodeProps);
-
-    console.log(node);
-  });
+  return parsedFile;
 };
 
 /**
  * Converts a YAML file into an Object
  * 
- * @param {string} path The path to the file
+ * @param {string} filePath The path to the file
  * 
  * @returns {Object} An Object representation of the file
  */
-const extractFile = (path) => {
+const extractFile = (filePath) => {
   try {
-    return yaml.load(fs.readFileSync(path, 'utf8'));
-  } catch (e) {
-    console.log(e);
+    return yaml.load(fs.readFileSync(filePath, 'utf8'));
+  } catch (err) {
+    console.log(err);
     // Log the incident
     // stub
   }
@@ -61,24 +45,6 @@ const extractFile = (path) => {
 const isValid = (parsedFile) => {
   // stub
   return true;
-};
-
-/**
- * Builds object properties for node construction
- * 
- * @param {Object} propMapping Map of MDB fields to YAML fields
- * @param {Object} parsedFile Object representation of YAML data
- * 
- * @returns {Object} Instance properties mapped to values
- */
-const buildProps = (propMapping, parsedFile) => {
-    const nodeProps = Object.keys(propMapping).reduce((props, prop) => {
-      props[prop] = parsedFile[propMapping[prop]];
-
-      return props;
-    }, {});
-
-    return nodeProps;
 };
 
 export default extract;
