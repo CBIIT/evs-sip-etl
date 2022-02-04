@@ -3,7 +3,7 @@
  */
 const nodeMap = {
   desc: 'description',
-  handle: 'title',
+  handle: 'id',
   nanoid: 'nanoid'
 };
 
