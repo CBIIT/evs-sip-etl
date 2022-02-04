@@ -1,3 +1,6 @@
+import relationshipMap from '../mappings/relationshipMap.js';
+import generateNanoId from './generateNanoId.js';
+
 /**
  * Corresponds to a Relationship in MDB's model
  * 
@@ -12,19 +15,23 @@
 export default class Relationship {
   // Instance properties
   desc = null;
+  dst = null;
   handle = null;
   isRequired = false;
   label = 'relationship';
-  model = null;
-  multiplicity = 'many_to_many';
-  nanoid = null;
+  model = 'GDC';
+  multiplicity = null;
+  nanoid = generateNanoId();
+  src = null;
 
-  constructor(desc, handle, isRequired, model, multiplicity, nanoid) {
-    this.desc = desc;
-    this.handle = handle;
-    this.isRequired = isRequired;
-    this.multiplicity = multiplicity;
-    this.model = model;
-    this.nanoid = nanoid;
+  /**
+   * Constructor
+   * 
+   * @param {Object} props Collection of properties mapped to values
+   */
+  constructor(props) {
+    for (const prop in relationshipMap) {
+      this[prop] = props[prop] ?? this[prop] ?? null;
+    }
   };
 };
