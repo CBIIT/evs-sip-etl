@@ -11,7 +11,7 @@ import generateNanoId from './generateNanoId.js';
  * @property {string} nanoid The Node's identifier
  */
 export default class Node {
-  // Private instance properties
+  // Instance properties
   desc = null;
   handle = null;
   label = 'node';

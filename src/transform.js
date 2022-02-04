@@ -18,7 +18,7 @@ const transform = (parsedFile) => {
   const nodeProps = buildProps(nodeMap, parsedFile);
   const node = new Node(nodeProps);
 
-  transformedData.nodes.push(node);
+  transformedData.node = node;
 
   return transformedData;
 };

@@ -1,6 +1,10 @@
 import neo4j from 'neo4j-driver';
 
-const load = async () => {
+const load = async (transformedData) => {
+  // Data
+  const node = transformedData.node;
+
+  // Neo4j connection
   const uri = process.env.NEO4J_URI;
   const user = process.env.NEO4J_USER;
   const pass = process.env.NEO4J_PASS;
@@ -8,17 +12,18 @@ const load = async () => {
   const session = driver.session();
 
   try {
-    const result = await session.run(
-      `CREATE (a:message {text: $text}) RETURN a`,
-      {text: 'Hello, world!'}
+    // Clear, for testing purposes
+    await session.run(
+      'MATCH (n) DELETE n'
     );
 
-    const singleRecord = result.records[0];
-    const node = singleRecord.get(0);
-
-    console.log(node.properties.text);
-    const deletion = await session.run(
-      'MATCH (n) DELETE n'
+    // Create Node
+    await session.run(
+      `CREATE (n:node {
+        handle: '${node.handle}',
+        model: '${node.model}',
+        nanoid: '${node.nanoid}'
+      })`
     );
   } finally {
     await session.close();

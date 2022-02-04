@@ -10,7 +10,7 @@
  * @property {string} nanoid The Relationship's identifier
  */
 export default class Relationship {
-  // Private instance properties
+  // Instance properties
   desc = null;
   handle = null;
   isRequired = false;

@@ -11,9 +11,7 @@ const main = () => {
   for (const filePath of filePaths) {
     const parsedFile = extract(filePath);
     const transformedData = transform(parsedFile);
-    //load();
-    console.log(transformedData);
-    return;
+    load(transformedData);
   }
 };
 

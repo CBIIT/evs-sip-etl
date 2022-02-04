@@ -12,7 +12,7 @@
  * @property {UNKNOWN} value_domain UNKNOWN
  */
 export default class Property {
-  // Private instance properties
+  // Instance properties
   desc = null;
   handle = null;
   isRequired = false;
