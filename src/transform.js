@@ -7,9 +7,12 @@ import nodeMap from './mappings/nodeMap.js';
  */
 const transform = (parsedFile) => {
   let transformedData = {
-    nodes: [],
+    node: null, // One object (should be one node per file)
     properties: [],
-    relationships: [],
+    relationships: [/*
+      many_to_one: 'node name',
+      one_to_one: 'other node name'
+    */],
   };
   // Build MDB Node
   const nodeProps = buildProps(nodeMap, parsedFile);
