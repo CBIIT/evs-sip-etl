@@ -27,6 +27,7 @@ const transform = (parsedFile) => {
     let relationshipProps = buildProps(relationshipMap, link);
     relationshipProps.src = node.handle;
     const relationship = new Relationship(relationshipProps);
+    transformedData.relationships.push(relationship);
     console.log(relationship);
   });
 
