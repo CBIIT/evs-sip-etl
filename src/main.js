@@ -3,7 +3,7 @@ import path from 'path';
 import extract from './extract.js';
 import neo4j from 'neo4j-driver';
 import transform from './transform.js';
-import load from './load.js';
+import load, { makeAllEdges } from './load.js';
 
 const main = () => {
   const filePaths = filesGenerator();
@@ -21,14 +21,41 @@ const main = () => {
  * Performs data extraction, transformation, and loading
  * 
  * @param {Array} filePaths Full paths of files to extract
+ * 
+ * @returns {Object} Edges to make later
  */
 const etl = (filePaths) => {
+  let edges = {
+    fromRelationships: [/*
+      {
+        name: 'has_src',
+        src: 'someRelationshipName',
+        dst: 'someNodeName',
+      }
+    */]
+  };
+
   // Go through each file
   for (const filePath of filePaths) {
     const parsedFile = extract(filePath);
     const transformedData = transform(parsedFile);
-    load(transformedData);
+    load(transformedData)/* .then(() => {
+      transformedData.relationships.forEach((relationship) => {
+        edges.fromRelationships.push({
+          name: 'has_src',
+          from: relationship.handle,
+          to: relationship.src
+        });
+        edges.fromRelationships.push({
+          name: 'has_dst',
+          from: relationship.handle,
+          to: relationship.dst
+        });
+      });
+    }) */;
   }
+
+  return edges;
 }
 
 /**
