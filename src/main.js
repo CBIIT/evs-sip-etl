@@ -6,15 +6,19 @@ import transform from './transform.js';
 import load, { makeAllEdges } from './load.js';
 
 const main = () => {
+  const preparationPromises = [];
   const filePaths = filesGenerator();
 
   if (process.env.IS_DEV) {
-    clearDatabase().then(() => {
-      etl(filePaths);
-    });
-  } else {
-    etl(filePaths);
+    const clearDatabasePromise = clearDatabase();
+    preparationPromises.push(clearDatabasePromise);
   }
+
+  return Promise.all(preparationPromises).then(() => {
+    return etl(filePaths).then(edges => {
+      // stub
+    });
+  });
 };
 
 /**
@@ -24,7 +28,7 @@ const main = () => {
  * 
  * @returns {Object} Edges to make later
  */
-const etl = (filePaths) => {
+const etl = async (filePaths) => {
   let edges = {
     fromRelationships: [/*
       {
@@ -39,7 +43,8 @@ const etl = (filePaths) => {
   for (const filePath of filePaths) {
     const parsedFile = extract(filePath);
     const transformedData = transform(parsedFile);
-    load(transformedData)/* .then(() => {
+
+    await load(transformedData).then(() => {
       transformedData.relationships.forEach((relationship) => {
         edges.fromRelationships.push({
           name: 'has_src',
@@ -52,9 +57,10 @@ const etl = (filePaths) => {
           to: relationship.dst
         });
       });
-    }) */;
+    });
   }
 
+  // Return edges when loads have finished
   return edges;
 }
 
@@ -72,9 +78,9 @@ const clearDatabase = async () => {
   session.run(
     'MATCH (n) DETACH DELETE n'
   ).then(() => {
-    session.close();
+    return session.close();
   }).then(() => {
-    driver.close();
+    return driver.close();
   });
 };
 

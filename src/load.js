@@ -7,7 +7,7 @@ import neo4j, { session } from 'neo4j-driver';
  * 
  * @returns {Array} Bookmarks of transactions
  */
-const load = (transformedData) => {
+const load = async (transformedData) => {
   // Data
   const node = transformedData.node;
   const relationships = transformedData.relationships;
@@ -18,38 +18,51 @@ const load = (transformedData) => {
   const pass = process.env.NEO4J_PASS;
   const driver = neo4j.driver(uri, neo4j.auth.basic(user, pass));
 
-  // Synchronize transactions
-  const savedBookmarks = [];
+  // Synchronize queries
+  const queryPromises = [];
 
   // Create the Node.
   const nodeSession = driver.session(neo4j.WRITE);
-  nodeSession.writeTransaction(tx => loadNode(tx, node)).then(
-    () => {
-      savedBookmarks.push(nodeSession.lastBookmark());
-
-      return nodeSession.close();
-    }
-  );
+  const nodeResults = loadNode(nodeSession, node);
+  queryPromises.push(nodeResults);
 
   // Create the Relationships.
-  const relationshipBookmarks = loadRelationships(driver, relationships);
-  savedBookmarks.push(...relationshipBookmarks);
+  const relationshipsResults = loadRelationships(driver, relationships);
+  queryPromises.push(relationshipsResults);
+
+  return Promise.all(queryPromises).then(async () => {
+    await driver.close();
+  });
 };
 
 /**
  * Loads the Node
  * 
- * @param {Object} tx The transaction
+ * @param {Object} session The session
  * @param {Object} node The node to add
+ * 
+ * @returns {Array} The resulting records
  */
-const loadNode = (tx, node) => {
-  return tx.run(
-    `CREATE (n:node {
-      handle: '${node.handle}',
-      model: '${node.model}',
-      nanoid: '${node.nanoid}'
-    })`
-  );
+const loadNode = async (session, node) => {
+  const records = [];
+
+  try {
+    const results = await session.run(
+      `CREATE (n:node {
+        handle: '${node.handle}',
+        model: '${node.model}',
+        nanoid: '${node.nanoid}'
+      })`
+    );
+
+    records.push(...results.records);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await session.close();
+  }
+
+  return records;
 };
 
 /**
@@ -58,49 +71,59 @@ const loadNode = (tx, node) => {
  * @param {Object} driver The Neo4j driver
  * @param {Array} relationships The relationships to add
  * 
- * @returns {Array} The transaction bookmarks
+ * @returns {Array} The resulting records
  */
 const loadRelationships = (driver, relationships) => {
-  const relationshipBookmarks = [];
-  const relationshipPromises = [];
+  const records = [];
 
   relationships.forEach((relationship) => {
     // Wait for previous relationship bookmarks to resolve
     const relationshipSession = driver.session(neo4j.WRITE);
 
     // Wait for previous relationship transaction promises to resolve
-    Promise.all(relationshipPromises).then(() => {
-      const relationshipPromise = loadRelationship(relationshipSession, relationship);
-      relationshipPromises.push(relationshipPromise);
-      return relationshipPromise;
-    }).then(() => {
-      relationshipBookmarks.push(relationshipSession.lastBookmark());
-
-      relationshipSession.close();
-    });
+    try {
+      const relationshipRecords = loadRelationship(relationshipSession, relationship);
+      records.push(relationshipRecords);
+    } catch (err) {
+      console.log(err);
+    }
   });
 
-  return relationshipBookmarks;
+  return records;
 };
 
 /**
  * Loads a single Relationship
  *
- * @param {Object} tx The transaction
+ * @param {Object} session The session
  * @param {Relationship} relationship The relationship to add
+ * 
+ * @returns {Array} The resulting records
  */
 const loadRelationship = async (session, relationship) => {
-  return await session.run(`
-    MERGE (r:relationship {
-      handle: '${relationship.handle}',
-      is_required: ${relationship.is_required},
-      model: '${relationship.model}',
-      multiplicity: '${relationship.multiplicity}'
-    })
-    ON CREATE
-        SET r.nanoid = '${relationship.nanoid}'
-    RETURN r;
-  `);
+  const records = [];
+
+  try {
+    const results = await session.run(`
+      MERGE (r:relationship {
+        handle: '${relationship.handle}',
+        is_required: ${relationship.is_required},
+        model: '${relationship.model}',
+        multiplicity: '${relationship.multiplicity}'
+      })
+      ON CREATE
+          SET r.nanoid = '${relationship.nanoid}'
+      RETURN r;
+    `);
+
+    records.push(...results.records);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await session.close();
+  }
+
+  return records;
 };
 
 /**
