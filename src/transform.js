@@ -22,13 +22,15 @@ const transform = (parsedFile) => {
   const node = new Node(nodeProps);
   transformedData.node = node;
 
-  // Build MDB Relationships
-  parsedFile.links.forEach(link => {
-    let relationshipProps = buildProps(relationshipMap, link);
-    relationshipProps.src = node.handle;
-    const relationship = new Relationship(relationshipProps);
-    transformedData.relationships.push(relationship);
-  });
+  if (parsedFile && parsedFile.hasOwnProperty('links')) {
+    // Build MDB Relationships
+    parsedFile.links.forEach(link => {
+      let relationshipProps = buildProps(relationshipMap, link);
+      relationshipProps.src = node.handle;
+      const relationship = new Relationship(relationshipProps);
+      transformedData.relationships.push(relationship);
+    });
+  }
 
   return transformedData;
 };
@@ -43,7 +45,10 @@ const transform = (parsedFile) => {
  */
 const buildProps = (propMapping, propsRaw) => {
     const props = Object.keys(propMapping).reduce((tempProps, prop) => {
-      tempProps[prop] = propsRaw[propMapping[prop]];
+      const sourceProp = propMapping[prop];
+      if (propsRaw && propsRaw.hasOwnProperty(sourceProp)) {
+        tempProps[prop] = propsRaw[sourceProp];
+      }
 
       return tempProps;
     }, {});

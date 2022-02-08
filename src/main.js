@@ -15,9 +15,9 @@ const main = () => {
   }
 
   return Promise.all(preparationPromises).then(() => {
-    return etl(filePaths).then(edges => {
-      // stub
-    });
+    return etl(filePaths);
+  }).then((edges) => {
+    makeAllEdges(edges);
   });
 };
 

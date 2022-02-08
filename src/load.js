@@ -138,33 +138,67 @@ export const makeAllEdges = async (edges) => {
   const pass = process.env.NEO4J_PASS;
   const driver = neo4j.driver(uri,neo4j.auth.basic(user, pass));
 
-  makeRelationshipEdges(edges.fromRelationships, driver).then(() => {
-    // stub
-    return true;
-  }).then(() => {
-    driver.close();
-  });
+  makeRelationshipEdges(driver, edges.fromRelationships);
+
+  await driver.close();
 };
 
 /**
  * Makes edges from Relationship nodes
  * 
  * @param {Object} driver Neo4j driver
+ * @param {Array} edges Relationship edges
+ * 
+ * @returns {Array} The resulting records
  */
-const makeRelationshipEdges = async (edges, driver) => {
-  for (const edge of edges) {
+const makeRelationshipEdges = (driver, edges) => {
+  const records = [];
+
+  edges.forEach((edge) => {
+    // Wait for previous relationship bookmarks to resolve
+    const edgeSession = driver.session(neo4j.WRITE);
+
+    // Wait for previous relationship transaction promises to resolve
+    try {
+      const edgeRecords = makeRelationshipEdge(edgeSession, edge);
+      records.push(edgeRecords);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  return records;
+};
+
+/**
+ * Loads a single Edge
+ *
+ * @param {Object} session The session
+ * @param {Object} edge The edge to add
+ * 
+ * @returns {Array} The resulting records
+ */
+const makeRelationshipEdge = async (session, edge) => {
+  const records = [];
+
+  try {
     console.log(edge);
-    const session = driver.session();
-    session.run(`
+    const results = await session.run(`
       MATCH
         (r:relationship),
         (n:node)
       WHERE r.handle = '${edge.from}' AND n.handle = '${edge.to}'
       CREATE (r)-[e:RELTYPE {name: '${edge.name}'}]->(n)
-    `).then(() => {
-      session.close();
-    });
+    `);
+
+    records.push(...results.records);
+  } catch (err) {
+    console.log(err);
+  } finally {
+    await session.close();
   }
+
+  return records;
 };
 
 export default load;
