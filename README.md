@@ -63,6 +63,8 @@ Below is a glossary of terminology used in this project's README and code:
 | ---- | ---------- |
 | MDB node | Any node (whether it's labeled "property", "relationship", "node", etc.) in the MDB model |
 | MDB Node | A node labeled "node" in the MDB model |
+| MDB Property | A node labeled "property" in the MDB model |
+| MDB Relationship | A node labeled "relationship" in the MDB model |
 
 ## Learn More
 
