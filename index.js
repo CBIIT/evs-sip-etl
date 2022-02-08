@@ -3,4 +3,4 @@ import main from './src/main.js';
 
 dotenv.config();
 
-main();
+await main();

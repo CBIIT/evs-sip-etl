@@ -182,7 +182,6 @@ const makeRelationshipEdge = async (session, edge) => {
   const records = [];
 
   try {
-    console.log(edge);
     const results = await session.run(`
       MATCH
         (r:relationship),

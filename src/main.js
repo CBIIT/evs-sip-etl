@@ -5,7 +5,7 @@ import neo4j from 'neo4j-driver';
 import transform from './transform.js';
 import load, { makeAllEdges } from './load.js';
 
-const main = () => {
+const main = async () => {
   const preparationPromises = [];
   const filePaths = filesGenerator();
 
