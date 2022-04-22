@@ -15,7 +15,7 @@ export default class Node {
   desc = null;
   handle = null;
   label = 'node';
-  model = 'GDC';
+  model = null;
   nanoid = generateNanoId();
 
   /**

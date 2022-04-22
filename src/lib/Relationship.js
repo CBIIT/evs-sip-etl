@@ -19,7 +19,7 @@ export default class Relationship {
   handle = null;
   isRequired = false;
   label = 'relationship';
-  model = 'GDC';
+  model = null;
   multiplicity = null;
   nanoid = generateNanoId();
   src = null;
