@@ -1,5 +1,5 @@
 import XLSX from 'xlsx';
-import Node from '../lib/Node';
+import Node from '../lib/Node.js';
 
 const makeMdfPcdc = async () => {
   // PCDC stub - needs a proper home
