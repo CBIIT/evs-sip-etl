@@ -1,8 +1,8 @@
 import path from 'path';
-import Node from './lib/Node.js';
-import nodeMap from './mappings/nodeMap.js';
-import Relationship from './lib/Relationship.js';
-import relationshipMap from './mappings/relationshipMap.js';
+import Node from '../lib/Node.js';
+import nodeMap from '../mappings/nodeMap.js';
+import Relationship from '../lib/Relationship.js';
+import relationshipMap from '../mappings/relationshipMap.js';
 
 /**
  * Builds MDB nodes from the Object representation of YAML data
