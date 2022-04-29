@@ -22,16 +22,16 @@ const main = async () => {
 
   console.log(`Performing action ${actionTypeName} ${actionName}...`);
   await actionType.perform(actionName);
-}
+};
 
 const explainUsage = async () => {
   await explainSyntax();
   await listActions();
-}
+};
 
 const explainSyntax = async () => {
   console.log(`Usage: npm run [action type] [action]\n`);
-}
+};
 
 const listActions = async () => {
   console.log(`Action types and actions:`);
@@ -44,6 +44,6 @@ const listActions = async () => {
       console.log(`    - ${actionName}`);
     });
   }
-}
+};
 
 export default main;
