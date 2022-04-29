@@ -12,6 +12,7 @@ import generateNanoId from './generateNanoId.js';
  */
 export default class Node {
   // Instance properties
+  category = null;
   desc = null;
   handle = null;
   label = 'node';
@@ -28,4 +29,13 @@ export default class Node {
       this[prop] = props[prop] ?? this[prop] ?? null;
     }
   };
+
+  /**
+   * Setter for category
+   * 
+   * @param {String} category The category
+   */
+  setCategory(category) {
+    this.category = category;
+  }
 };
