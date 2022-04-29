@@ -1,18 +1,29 @@
+import fs from 'fs';
 import XLSX from 'xlsx';
-import Node from '../lib/Node.js';
+import Node from '../../lib/Node.js';
 
 const makeMdfPcdc = async () => {
-  // PCDC stub - needs a proper home
+  const nodes = {};
   const rows = rowsGenerator();
 
   for (const row of rows) {
+    const category = row.Project;
+
+    // Provision a new category
+    if (!nodes.hasOwnProperty(category)) {
+      nodes[category] = {};
+    }
+
+    //console.log(row);
+
     let node = new Node({
       handle: row['PCDC Table PT'],
       model: 'PCDC',
     });
-
-    console.log(row);
   }
+  console.log(nodes);
+
+  //fs.writeFile('output/pcdc_model_file.yaml');
 };
 
 /**
