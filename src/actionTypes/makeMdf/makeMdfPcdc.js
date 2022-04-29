@@ -5,33 +5,53 @@ import yaml from 'js-yaml';
 const makeMdfPcdc = async () => {
   const nodes = {};
   const rows = rowsGenerator();
+  let lastPropName = '';
 
   for (const row of rows) {
-    const category = row.Project;
-    const nodeName = row['PCDC Table PT'];
-    const propName = row['NCIt PT'];
-    const propType = row['Has PCDC Data Type PT'];
+    const category = row.Project?.trim();
+    const nodeName = row['PCDC Table PT']?.trim();
+    const propName = row['NCIt PT']?.trim();
+    const propType = row['Has PCDC Data Type PT']?.trim();
+    const propDesc = row['NCIt Definition']?.trim();
 
     // Provision a new category
     if (!nodes.hasOwnProperty(category)) {
       nodes[category] = {};
     }
 
-    // Provision a new Node
+    // Provision a new node
     if (!nodes[category].hasOwnProperty(nodeName)) {
       nodes[category][nodeName] = {};
     }
 
-    // Provision a new Property
+    // Provision a new property, or add a value to a property
     if (propType) {
-      nodes[category][nodeName][propName] = {
-        type: propType,
-      };
+      const prop = {
+        desc: propDesc,
+        type: propType?.toLowerCase() == 'code' ? [] : propType,
+      }
+
+      // Store the prop
+      nodes[category][nodeName][propName] = prop;
+
+      // Update last property name
+      lastPropName = propName;
+    } else {
+      const valueName = propName;
+
+      // Sometimes, the spreadsheet specifies a type that's not "code" but
+      //  is still followed by rows of permissible values.
+      if (Array.isArray(nodes[category][nodeName][lastPropName].type)) {
+        nodes[category][nodeName][lastPropName].type?.push(valueName);
+      }
     }
   }
 
   // Transform and dump to YAML file
-  await writeYamlFile(await transformNodeMap(nodes));
+  const modelDescription = await transformToNodeMap(nodes);
+  const propDefinitions = await transformToPropMap(nodes);
+  await writeYamlFile(modelDescription, 'output/pcdc-model-file.yaml');
+  await writeYamlFile(propDefinitions, 'output/pcdc-model-properties-file.yaml');
 };
 
 /**
@@ -55,11 +75,11 @@ const rowsGenerator = function* () {
 };
 
 /**
- * Transforms node map in preparation for YAML dump
+ * Transforms node map in preparation for node YAML dump
  * @param {Object} map  The node map to transform
  * @returns {Object} The transformed node map
  */
-const transformNodeMap = async (map) => {
+const transformToNodeMap = async (map) => {
   const newMap = {
     Nodes: {},
     Relationships: {},
@@ -87,14 +107,44 @@ const transformNodeMap = async (map) => {
 };
 
 /**
+ * Transforms node map in preparation for property YAML dump
+ * @param {Object} map  The node map to transform
+ * @returns {Object} The transformed node map
+ */
+const transformToPropMap = async (map) => {
+  const newMap = {
+    PropDefinitions: {},
+  };
+
+  // Transform categories and nodes to nodes
+  for (const category in map) {
+    // Build list of nodes
+    for (const nodeName in map[category]) {
+      // Build node's list of properties
+      for (const propName in map[category][nodeName]) {
+        const prop = map[category][nodeName][propName];
+        newMap.PropDefinitions[`${category}.${nodeName}.${propName}`] = {
+          Desc: prop.desc,
+          Type: prop.type,
+        };
+      }
+    }
+  }
+
+  return newMap;
+};
+
+/**
  * Writes the provided JSON object to a YAML file
  * 
  * @param {Object} jsObj The object to write to YAML
  * @param {String} path The path and filename of the output file
  */
 const writeYamlFile = async (jsObj, path) => {
-  const dump = yaml.dump(jsObj);
-  fs.writeFileSync('output/pcdc-model-file.yaml', dump, 'utf8');
+  const dump = yaml.dump(jsObj, {
+    lineWidth: -1,
+  });
+  fs.writeFileSync(path, dump, 'utf8');
 };
 
 export default makeMdfPcdc;
