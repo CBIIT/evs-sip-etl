@@ -1,6 +1,7 @@
 import fs from 'fs';
 import XLSX from 'xlsx';
 import yaml from 'js-yaml';
+import formatName from '../../lib/formatName.js';
 
 const inputDir = process.env.DATA_DIR_PCDC ?? 'data/pcdc';
 const outputDir = process.env.OUTPUT_DIR ?? 'output';
@@ -11,11 +12,11 @@ const makeMdfPcdc = async () => {
   let lastPropName = '';
 
   for (const row of rows) {
-    const category = row.Project?.trim();
-    const nodeName = row['PCDC Table PT']?.trim();
-    const propName = row['NCIt PT']?.trim();
-    const propType = row['Has PCDC Data Type PT']?.trim();
-    const propDesc = row['NCIt Definition']?.trim();
+    const category = row.Project;
+    const nodeName = formatName(row['PCDC Table PT']);
+    const propName = formatName(row['NCIt PT']);
+    const propType = row['Has PCDC Data Type PT'];
+    const propDesc = row['NCIt Definition'];
 
     // Provision a new category
     if (!nodes.hasOwnProperty(category)) {
