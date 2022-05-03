@@ -2,6 +2,9 @@ import fs from 'fs';
 import XLSX from 'xlsx';
 import yaml from 'js-yaml';
 
+const inputDir = process.env.DATA_DIR_PCDC ?? 'data/pcdc';
+const outputDir = process.env.OUTPUT_DIR ?? 'output';
+
 const makeMdfPcdc = async () => {
   const nodes = {};
   const rows = rowsGenerator();
@@ -41,7 +44,7 @@ const makeMdfPcdc = async () => {
 
       // Sometimes, the spreadsheet specifies a type that's not "code" but
       //  is still followed by rows of permissible values.
-      if (Array.isArray(nodes[category][nodeName][lastPropName].type)) {
+      if (Array.isArray(nodes[category][nodeName][lastPropName]?.type)) {
         nodes[category][nodeName][lastPropName].type?.push(valueName);
       }
     }
@@ -50,8 +53,8 @@ const makeMdfPcdc = async () => {
   // Transform and dump to YAML file
   const modelDescription = await transformToNodeMap(nodes);
   const propDefinitions = await transformToPropMap(nodes);
-  await writeYamlFile(modelDescription, 'output/pcdc-model-file.yaml');
-  await writeYamlFile(propDefinitions, 'output/pcdc-model-properties-file.yaml');
+  await writeYamlFile(modelDescription, `${outputDir}/pcdc-model-file.yaml`);
+  await writeYamlFile(propDefinitions, `${outputDir}/pcdc-model-properties-file.yaml`);
 };
 
 /**
@@ -59,7 +62,7 @@ const makeMdfPcdc = async () => {
  */
 const rowsGenerator = function* () {
   try {
-    const filename = 'data/pcdc/PCDC_Terminology.xls';
+    const filename = `${inputDir}/PCDC_Terminology.xls`;
     var workbook = XLSX.readFile(filename);
     var wsNames = workbook.SheetNames;
     var wsName = wsNames[wsNames.length - 1];
@@ -67,6 +70,13 @@ const rowsGenerator = function* () {
     var rows = XLSX.utils.sheet_to_json(ws);
 
     for (const row of rows) {
+      // Trim leading and trailing whitespace
+      for (const prop in row) {
+        if (typeof row[prop] === 'string') {
+          row[prop] = row[prop]?.trim();
+        }
+      }
+
       yield row;
     }
   } catch (err) {
