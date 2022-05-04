@@ -12,7 +12,7 @@ const formatName = (name) => {
 
   // Replace each space or series of consecutive spaces with an underscore
   name = name.toLowerCase();
-  name = name.replaceAll(/ +/g, '_');
+  name = name.replaceAll(/[\-\/\\ ]+/g, '_');
 
   return name;
 };
