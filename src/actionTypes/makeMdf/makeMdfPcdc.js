@@ -15,7 +15,7 @@ const makeMdfPcdc = async () => {
     const category = row.Project;
     const nodeName = formatName(row['PCDC Table PT']);
     const propName = formatName(row['NCIt PT']);
-    const propType = row['Has PCDC Data Type PT'];
+    const propType = row['Has PCDC Data Type PT']?.toLowerCase();
     const propDesc = row['NCIt Definition'];
 
     // Provision a new category
@@ -32,7 +32,12 @@ const makeMdfPcdc = async () => {
     if (propType) {
       const prop = {
         desc: propDesc,
-        type: propType?.toLowerCase() == 'code' ? [] : propType,
+        type: propType,
+        vals: {/* eg:
+          val1: true,
+          val2: true,
+          etc.
+      */},
       }
 
       // Store the prop
@@ -40,14 +45,22 @@ const makeMdfPcdc = async () => {
 
       // Update last property name
       lastPropName = propName;
+    } else if (!nodes[category][nodeName][lastPropName]) {
+      // Property doesn't exist
+      // TODO let the error handler decide what to do
+      console.log(`
+        ${category}'s node ${nodeName} has no property named "${lastPropName}"!
+        ${propName} is possibly an orphaned permissible value.
+      `);
     } else {
-      const valueName = propName;
+      // In this context, we're using the name of a permissible value,
+      //  not the name of a property
+      const valName = propName;
 
+      // Add permissible value to list
       // Sometimes, the spreadsheet specifies a type that's not "code" but
       //  is still followed by rows of permissible values.
-      if (Array.isArray(nodes[category][nodeName][lastPropName]?.type)) {
-        nodes[category][nodeName][lastPropName].type?.push(valueName);
-      }
+      nodes[category][nodeName][lastPropName].vals[valName] = true;
     }
   }
 
@@ -110,7 +123,7 @@ const transformToNodeMap = async (map) => {
         node.Props.push(propName);
       }
 
-      newMap.Nodes[nodeName] = node;
+      newMap.Nodes[`${category}.${nodeName}`] = node;
     }
   }
 
@@ -134,10 +147,23 @@ const transformToPropMap = async (map) => {
       // Build node's list of properties
       for (const propName in map[category][nodeName]) {
         const prop = map[category][nodeName][propName];
-        newMap.PropDefinitions[`${category}.${nodeName}.${propName}`] = {
+
+        // Build transformed property
+        const newProp = {
           Desc: prop.desc,
           Type: prop.type,
         };
+
+        // If the type is `code`, then Type should be a list of permissible values instead
+        if (prop.type === 'code' && Object.keys(prop.vals).length) {
+          newProp.Type = Object.keys(prop.vals);
+        }
+
+        // Only save the property if it has a type
+        // TODO handle problematic types through the error handler
+        if (newProp.Type) {
+          newMap.PropDefinitions[`${category}.${nodeName}.${propName}`] = newProp;
+        }
       }
     }
   }
