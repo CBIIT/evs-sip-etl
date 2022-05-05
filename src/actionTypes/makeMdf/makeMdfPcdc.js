@@ -1,14 +1,14 @@
 import fs from 'fs';
-import XLSX from 'xlsx';
 import yaml from 'js-yaml';
 import formatName from '../../lib/formatName.js';
+import generateRows from '../../lib/generateRows.js';
 
 const inputDir = process.env.DATA_DIR_PCDC ?? 'data/pcdc';
 const outputDir = process.env.OUTPUT_DIR ?? 'output';
 
 const makeMdfPcdc = async () => {
   const nodes = {};
-  const rows = rowsGenerator();
+  const rows = generateRows(`${inputDir}/PCDC_Terminology.xls`);
   let lastPropName = '';
 
   for (const row of rows) {
@@ -69,33 +69,6 @@ const makeMdfPcdc = async () => {
   const propDefinitions = await transformToPropMap(nodes);
   await writeYamlFile(modelDescription, `${outputDir}/pcdc-model-file.yaml`);
   await writeYamlFile(propDefinitions, `${outputDir}/pcdc-model-properties-file.yaml`);
-};
-
-/**
- * Yields spreadsheet rows
- */
-const rowsGenerator = function* () {
-  try {
-    const filename = `${inputDir}/PCDC_Terminology.xls`;
-    var workbook = XLSX.readFile(filename);
-    var wsNames = workbook.SheetNames;
-    var wsName = wsNames[wsNames.length - 1];
-    var ws = workbook.Sheets[wsName];
-    var rows = XLSX.utils.sheet_to_json(ws);
-
-    for (const row of rows) {
-      // Trim leading and trailing whitespace
-      for (const prop in row) {
-        if (typeof row[prop] === 'string') {
-          row[prop] = row[prop]?.trim();
-        }
-      }
-
-      yield row;
-    }
-  } catch (err) {
-    console.log(err);
-  }
 };
 
 /**
