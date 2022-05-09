@@ -6,7 +6,8 @@ import actionTypes from './lib/actionTypes.js';
 const main = async () => {
   const actionTypeName = process.argv[2];
   const actionName = process.argv[3];
-  const actionType = new actionTypes[actionTypeName]();
+  const actionTypeClass = actionTypes[actionTypeName];
+  const actionType = actionTypeClass ? new actionTypeClass() : null;
 
   // Explain usage if arguments were not provided
   if (!(actionTypeName && actionName)) {
