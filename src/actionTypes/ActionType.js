@@ -32,7 +32,7 @@ export default class ActionType {
     }
 
     console.log(`Performing action ${actionName}...`);
-    await this.actions[actionName]();
+    await this._actions[actionName]();
   }
 
   /**
@@ -42,7 +42,7 @@ export default class ActionType {
    * @returns {Boolean} True iff the action exists
    */
   async hasAction(actionName) {
-    return this.actions.hasOwnProperty(actionName);
+    return this._actions.hasOwnProperty(actionName);
   }
 
   /**
@@ -50,6 +50,6 @@ export default class ActionType {
    * @returns {String[]} The action names
    */
   async getActionNames() {
-    return Object.keys(this.actions);
+    return Object.keys(this._actions);
   }
 }
