@@ -79,7 +79,7 @@ Then, from `gdc-model/model-desc`, run
 
 `src/actionTypes` contains classes for each action type and functions for each action.
 
-`src/lib` contains classes that represent graph nodes in the Bento MDB model. It also contains utility functions and a map of action type classes.
+`src/lib` contains classes that represent graph vertices in the Bento MDB model. It also contains utility functions and a map of action type classes.
 
 `src/mappings` contains files defining the YAML fields that match corresponding MDB fields. If the fieldset of a YAML file changes, then edit the corresponding mapping in `mappings` instead of editing the constructor of MDB classes in `lib`.
 
