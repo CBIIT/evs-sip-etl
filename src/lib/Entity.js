@@ -33,6 +33,8 @@ export default class Entity {
     for (const propName of PROP_NAMES) {
       if (props.hasOwnProperty(propName)) {
         this[propName] = props[propName];
+      } else {
+        this[propName] = undefined;
       }
     }
 
