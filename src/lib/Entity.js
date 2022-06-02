@@ -89,6 +89,8 @@ export default class Entity {
   }
 
   /**
+   * Nanoid getter
+   * 
    * @returns {string} The entity's nanoid
    */
   get nanoid() {
