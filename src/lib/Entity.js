@@ -15,12 +15,12 @@ const PROP_NAMES = [
  * Corresponds to an entity in MDB's model
  * Serves as the superclass of node, property, etc.
  * 
- * @property {string} desc A description of the entity
- * @property {string} handle The MDF-formatted name of the entity
- * @property {string} label Identifies the entity's type in Neo4j
- * @property {string} model The data commons that the entity is from
- * @property {string} name The name of the entity
- * @property {string} nanoid The entity's identifier
+ * @property {string} _desc A description of the entity
+ * @property {string} _handle The MDF-formatted name of the entity
+ * @property {string} _label Identifies the entity's type in Neo4j
+ * @property {string} _model The data commons that the entity is from
+ * @property {string} _name The name of the entity
+ * @property {string} _nanoid The entity's identifier
  */
 export default class Entity {
   /**
