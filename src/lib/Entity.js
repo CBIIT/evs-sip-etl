@@ -39,6 +39,7 @@ export default class Entity {
     }
 
     this._handle = formatName(this.handle);
+    this._label = 'entity';
     this._nanoid = generateNanoId();
   };
 
