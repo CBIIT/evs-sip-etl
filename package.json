@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "action": "node index.js"
+    "action": "node index.js",
+    "test": "node tests/test.js"
   },
   "keywords": [
     "evs-sip",
