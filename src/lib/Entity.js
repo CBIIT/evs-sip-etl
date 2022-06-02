@@ -79,7 +79,7 @@ export default class Entity {
   /**
    * Name getter
    * 
-   * @returns {string} The entity's formatted name
+   * @returns {string} The entity's name
    */
   get name() {
     return this._name;
