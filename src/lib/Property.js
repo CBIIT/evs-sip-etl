@@ -1,3 +1,5 @@
+import Entity from "./Entity.js";
+
 // Names of instance properties that Entity doesn't have
 const PROP_NAMES = [
   '_isRequired',
