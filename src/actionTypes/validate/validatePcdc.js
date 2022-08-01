@@ -1,4 +1,7 @@
+import formatName from '../../lib/formatName.js';
 import generateRows from '../../lib/generateRows.js';
+import Node from '../../lib/Node.js';
+import Property from '../../lib/Property.js';
 
 /**
  * Validate Table (Bento Node) name
@@ -9,7 +12,7 @@ import generateRows from '../../lib/generateRows.js';
 const isNodeValid = (name) => {
   const regex = new RegExp(/^[A-Za-z_][A-Za-z0-9_.]*$/);
 
-  return regex.test(name);
+  return regex.test(formatName(name));
 };
 
 /**
@@ -18,8 +21,10 @@ const isNodeValid = (name) => {
  * @param {string} name The name to validate
  * @returns {boolean} Whether or not the name is valid
  */
-const isPropertyValid = (row, i) => {
-  return true;
+const isPropertyValid = (name) => {
+  const regex = new RegExp(/^[A-Za-z_][A-Za-z0-9_.]*$/);
+
+  return regex.test(formatName(name));
 };
 
 const validators = {
@@ -42,6 +47,17 @@ const validators = {
  */
 const isRowValid = (row, i = undefined) => {
   let isValid = true;
+
+  // Make a Node to validate
+  const node = new Node({
+    handle: formatName(row['PCDC Table PT']),
+    name: row['PCDC Table PT'],
+  });
+
+  // Make a Property to validate
+  const prop = new Property({
+    
+  });
 
   for (const type in validators) {
     const validator = validators[type];
