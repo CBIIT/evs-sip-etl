@@ -57,13 +57,18 @@ On Linux and Mac(?), run the command
 
 ### Download the `gdc-model` repository
 
-Clone the [CBIIT/gdc-model](https://github.com/CBIIT/gdc-model) repository.
+Clone the [CBIIT/gdc-model](https://github.com/CBIIT/gdc-model) repository:
+
+    git clone https://github.com/CBIIT/gdc-model.git
+    cd gdc-model
+    git submodule init
+    git submodule update
 
 ### Load Data from MDF into Neo4j
 
 Then, from `gdc-model/model-desc`, run
 
-    load-mdf.py --handle GDC --user <user> --passw <passw> --bolt bolt://<host> --commit test --put gdc-model.yaml gdc-model-props.yaml model gdc-model-terms.yaml
+    load-mdf.py --handle GDC --user <user> --passw <passw> --bolt bolt://<host> --commit test --put gdc-model.yaml gdc-model-props.yaml gdc-model-terms.yaml
 
 ## Project Structure
 
