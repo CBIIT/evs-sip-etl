@@ -1,36 +1,76 @@
-/**
- * Corresponds to a Property in MDB's model
- * 
- * @property {string} desc A description of the Property
- * @property {string} handle The name of the Property
- * @property {bool} isRequired Whether or not the Property is required
- * @property {string} label Identifies this as an MDB property in Neo4j
- * @property {string} model The data commons that the Property is from
- * @property {string} nanoid The Property's identifier
- * @property {UNKNOWN} pattern UNKNOWN
- * @property {UNKNOWN} units UNKNOWN
- * @property {UNKNOWN} value_domain UNKNOWN
- */
-export default class Property {
-  // Instance properties
-  desc = null;
-  handle = null;
-  isRequired = false;
-  label = 'property';
-  model = null;
-  nanoid = null;
-  pattern = null;
-  units = null;
-  valueDomain = null;
+import Entity from "./Entity.js";
 
-  constructor(desc, handle, isRequired, model, nanoid, pattern, units, valueDomain) {
-    this.desc = desc;
-    this.handle = handle;
-    this.isRequired = isRequired;
-    this.model = model;
-    this.nanoid = nanoid;
-    this.pattern = pattern;
-    this.units = units;
-    this.valueDomain = valueDomain;
+// Names of instance properties that Entity doesn't have
+const PROP_NAMES = [
+  '_isRequired',
+  '_pattern',
+  '_units',
+  '_valueDomain',
+];
+
+/**
+ * Corresponds to a property in MDB's model
+ * 
+ * @property {string} _desc A description of the property
+ * @property {string} _handle The MDF-formatted name of the property
+ * @property {boolean} _isRequired Whether or not the Property is required
+ * @property {string} _label Identifies this as an MDB property in Neo4j
+ * @property {string} _model The data commons that the property is from
+ * @property {string} _name The name of the property
+ * @property {string} _nanoid The property's identifier
+ * @property {UNKNOWN} _pattern UNKNOWN
+ * @property {string} _units UNKNOWN
+ * @property {UNKNOWN} _valueDomain UNKNOWN
+ */
+export default class Property extends Entity {
+  constructor(props) {
+    super(props);
+
+    // Set uninherited instance properties that are passed through the constructor
+    for (const propName of PROP_NAMES) {
+      if (props.hasOwnProperty(propName)) {
+        this[propName] = props[propName];
+      } else {
+        this[propName] = undefined;
+      }
+    }
+
+    this._label = 'property';
   };
+
+  /**
+   * IsRequired getter
+   * 
+   * @returns {boolean} Whether the property is required
+   */
+  get isRequired() {
+    return this._isRequired;
+  }
+
+  /**
+   * Pattern getter
+   * 
+   * @returns {unknown} The property's pattern
+   */
+  get pattern() {
+    return this._pattern;
+  }
+
+  /**
+   * Units getter
+   * 
+   * @returns {string} The property's units
+   */
+  get units() {
+    return this._units;
+  }
+
+  /**
+   * Value domain getter
+   * 
+   * @returns {unknown} The property's value domain
+   */
+  get valueDomain() {
+    return this._valueDomain;
+  }
 };

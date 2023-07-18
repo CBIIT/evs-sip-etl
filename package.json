@@ -5,7 +5,8 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "test": "node index.js"
+    "action": "node index.js",
+    "test": "node tests/test.js"
   },
   "keywords": [
     "evs-sip",
@@ -19,6 +20,7 @@
   "dependencies": {
     "dotenv": "^14.3.2",
     "js-yaml": "^4.1.0",
-    "neo4j-driver": "^4.4.1"
+    "neo4j-driver": "^4.4.1",
+    "xlsx": "^0.18.5"
   }
 }

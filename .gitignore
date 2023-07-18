@@ -7,6 +7,10 @@
 /data/model/*
 !/data/model/.gitkeep
 
+# Output
+/output/*
+!/output/.gitkeep
+
 # Logs
 /logs/*
 !/logs/.gitkeep

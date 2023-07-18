@@ -1,113 +1,49 @@
-import { readdirSync } from 'fs';
-import path from 'path';
-import extract from './extract.js';
-import neo4j from 'neo4j-driver';
-import transform from './transform.js';
-import load, { makeAllEdges } from './load.js';
+import actionTypes from './lib/actionTypes.js';
 
+/**
+ * Runs user's desired action.
+ */
 const main = async () => {
-  const preparationPromises = [];
-  const filePaths = filesGenerator();
+  const actionTypeName = process.argv[2];
+  const actionName = process.argv[3];
+  const actionTypeClass = actionTypes[actionTypeName];
+  const actionType = actionTypeClass ? new actionTypeClass() : null;
 
-  if (process.env.IS_DEV) {
-    const clearDatabasePromise = clearDatabase();
-    preparationPromises.push(clearDatabasePromise);
+  // Explain usage if arguments were not provided
+  if (!(actionTypeName && actionName)) {
+    await explainUsage();
+
+    return;
   }
 
-  return Promise.all(preparationPromises).then(() => {
-    return etl(filePaths);
-  }).then((edges) => {
-    makeAllEdges(edges);
-  });
+  // Handle nonexistent action type
+  if (!actionType) {
+    console.log(`Action type ${actionTypeName} doesn't exist!`);
+  }
+
+  console.log(`Performing action ${actionTypeName} ${actionName}...`);
+  await actionType.perform(actionName);
 };
 
-/**
- * Performs data extraction, transformation, and loading
- * 
- * @param {Array} filePaths Full paths of files to extract
- * 
- * @returns {Object} Edges to make later
- */
-const etl = async (filePaths) => {
-  let edges = {
-    fromRelationships: [/*
-      {
-        name: 'has_src',
-        src: 'someRelationshipName',
-        dst: 'someNodeName',
-      }
-    */]
-  };
+const explainUsage = async () => {
+  await explainSyntax();
+  await listActions();
+};
 
-  // Go through each file
-  for (const filePath of filePaths) {
-    const parsedFile = extract(filePath);
-    const transformedData = transform(parsedFile);
+const explainSyntax = async () => {
+  console.log(`Usage: npm run [action type] [action]\n`);
+};
 
-    await load(transformedData).then(() => {
-      transformedData.relationships.forEach((relationship) => {
-        edges.fromRelationships.push({
-          name: 'has_src',
-          from: relationship.handle,
-          to: relationship.src
-        });
-        edges.fromRelationships.push({
-          name: 'has_dst',
-          from: relationship.handle,
-          to: relationship.dst
-        });
-      });
+const listActions = async () => {
+  console.log(`Action types and actions:`);
+  for (const actionTypeName in actionTypes) {
+    const actionType = new actionTypes[actionTypeName]();
+    const actionNames = await actionType.getActionNames();
+
+    console.log(`  - ${actionTypeName}`);
+    actionNames.forEach((actionName) => {
+      console.log(`    - ${actionName}`);
     });
-  }
-
-  // Return edges when loads have finished
-  return edges;
-}
-
-/**
- * Clears the database for testing purposes
- */
-const clearDatabase = async () => {
-  // Neo4j connection
-  const uri = process.env.NEO4J_URI;
-  const user = process.env.NEO4J_USER;
-  const pass = process.env.NEO4J_PASS;
-  const driver = neo4j.driver(uri,neo4j.auth.basic(user, pass));
-  const session = driver.session();
-
-  session.run(
-    'MATCH (n) DETACH DELETE n'
-  ).then(() => {
-    return session.close();
-  }).then(() => {
-    return driver.close();
-  });
-};
-
-/**
- * Yields names of files in the data directory
- */
-const filesGenerator = function* () {
-  const dataDir = process.env.DATA_DIR;
-
-  try {
-    const filenames = readdirSync(dataDir);
-
-    for (const filename of filenames) {
-      // Skip definition files
-      if (filename[0] == '_') {
-        continue;
-      }
-
-      // Skip non-YAML files
-      if (filename.split('.').at(-1).toLowerCase() !== 'yaml') {
-        continue;
-      }
-
-      yield `${dataDir}${path.sep}${filename}`;
-    }
-  } catch (err) {
-    console.log(err);
   }
 };
 
