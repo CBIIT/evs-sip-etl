@@ -21,8 +21,9 @@ const main = async () => {
     console.log(`Action type ${actionTypeName} doesn't exist!`);
   }
 
-  console.log(`Performing action ${actionTypeName} ${actionName}...`);
+  console.log(`Performing action ${actionName} of type ${actionTypeName}...`);
   await actionType.perform(actionName);
+  console.log(`Finished action ${actionName} of type ${actionTypeName}`);
 };
 
 const explainUsage = async () => {
@@ -31,7 +32,7 @@ const explainUsage = async () => {
 };
 
 const explainSyntax = async () => {
-  console.log(`Usage: npm run [action type] [action]\n`);
+  console.log(`Usage: npm run action [action type] [action]\n`);
 };
 
 const listActions = async () => {

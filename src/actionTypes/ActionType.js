@@ -33,6 +33,7 @@ export default class ActionType {
 
     console.log(`Performing action ${actionName}...`);
     await this._actions[actionName]();
+    console.log(`Finished action ${actionName}`)
   }
 
   /**
