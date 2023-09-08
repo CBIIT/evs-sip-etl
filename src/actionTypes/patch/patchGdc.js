@@ -4,18 +4,44 @@ import neo4j from 'neo4j-driver';
 const inputDir = process.env.DATA_DIR_GDC ?? 'data/gdc';
 
 const neo4jUri = process.env.NEO4J_URI ?? 'bolt://localhost:7687';
-const neo4jUser = process.env.NEO4J_USER;
-const neo4jPass = process.env.NEO4J_PASS;
+const neo4jUser = process.env.NEO4J_USER ?? 'neo4j';
+const neo4jPass = process.env.NEO4J_PASS ?? 'password';
 const driver = neo4j.driver(neo4jUri, neo4j.auth.basic(neo4jUser, neo4jPass));
-const session = driver.session();
 
 /**
  * Patches the GDC Neo4j data from additional source data files
  * @returns {void}
  */
 const patchGdc = async () => {
-  let props = JSON.parse(fs.readFileSync(`${inputDir}/gdc_props.js`));
-  props = await unflatten(props);
+  let ncitCodes = JSON.parse(fs.readFileSync(`${inputDir}/gdc_props.js`));
+  ncitCodes = await unflatten(ncitCodes);
+
+  for (const categoryName in ncitCodes) {
+    for (const nodeName in ncitCodes[categoryName]) {
+      for (const propertyName in ncitCodes[categoryName][nodeName]) {
+        const ncitCode = ncitCodes[categoryName][nodeName][propertyName];
+        const session = driver.session();
+
+        try {
+          const result = await session.run(
+            'MATCH (p:property) MATCH (p)<--(n:node) WHERE n.handle=$nodeName AND p.handle=$propertyName RETURN p.handle;',
+            {
+              nodeName: nodeName,
+              propertyName: propertyName,
+            }
+          )
+
+          console.log(nodeName, result.records[0].get('p.handle'));
+        } finally {
+          await session.close()
+        }
+      }
+    }
+  }
+
+  // on application exit:
+  await driver.close()
+
   return;
 };
 
