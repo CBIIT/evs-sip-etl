@@ -26,13 +26,14 @@ export default class ActionType {
    */
   async perform(actionName) {
     if (!this.hasAction(actionName)) {
-      console.log(`Action ${actionName} doesn't exist!`);
+      console.log(`Action \`${actionName}\` doesn't exist!`);
 
       return;
     }
 
-    console.log(`Performing action ${actionName}...`);
+    console.log(`Performing action \`${actionName}\`...`);
     await this._actions[actionName]();
+    console.log(`Finished action \`${actionName}\``)
   }
 
   /**
