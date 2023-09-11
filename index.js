@@ -1,6 +1,4 @@
-import dotenv from 'dotenv';
+import dotenv from 'dotenv/config';
 import main from './src/main.js';
-
-dotenv.config();
 
 await main();
