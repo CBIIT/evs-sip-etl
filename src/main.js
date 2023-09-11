@@ -18,12 +18,14 @@ const main = async () => {
 
   // Handle nonexistent action type
   if (!actionType) {
-    console.log(`Action type ${actionTypeName} doesn't exist!`);
+    console.log(`Action type \`${actionTypeName}\` doesn't exist!`);
+
+    return;
   }
 
-  console.log(`Performing action ${actionName} of type ${actionTypeName}...`);
+  console.log(`Performing action \`${actionName}\` of type \`${actionTypeName}\`...`);
   await actionType.perform(actionName);
-  console.log(`Finished action ${actionName} of type ${actionTypeName}`);
+  console.log(`Finished action \`${actionName}\` of type \`${actionTypeName}\``);
 };
 
 const explainUsage = async () => {
