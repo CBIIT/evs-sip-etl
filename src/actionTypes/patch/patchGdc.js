@@ -16,6 +16,8 @@ const patchGdc = async () => {
   let ncitCodes = JSON.parse(fs.readFileSync(`${inputDir}/gdc_props.js`));
   ncitCodes = await unflatten(ncitCodes);
 
+  console.log('Patching NCIt codes...');
+
   for (const categoryName in ncitCodes) {
     for (const nodeName in ncitCodes[categoryName]) {
       for (const propertyName in ncitCodes[categoryName][nodeName]) {
@@ -23,21 +25,27 @@ const patchGdc = async () => {
         const session = driver.session();
 
         try {
+          console.log(`Assigning NCIt code ${ncitCode} to ${nodeName}.${propertyName}...`);
+
           const result = await session.run(
-            'MATCH (p:property) MATCH (p)<--(n:node) WHERE n.handle=$nodeName AND p.handle=$propertyName RETURN p.handle;',
+            'MATCH (p:property) MATCH (p)<--(n:node) WHERE n.handle=$nodeName AND p.handle=$propertyName SET p.ncit_code=$ncitCode RETURN p.handle, p.ncitCode, n.handle;',
             {
+              ncitCode: ncitCode,
               nodeName: nodeName,
               propertyName: propertyName,
             }
-          )
+          );
+          const record = result.records[0];
 
-          console.log(nodeName, result.records[0].get('p.handle'));
+          console.log(`Assigned NCIt code ${record.get('p.ncitCode')} to ${record.get('n.handle')}.${record.get('p.handle')}`);
         } finally {
           await session.close()
         }
       }
     }
   }
+
+  console.log('Finished patching NCIt codes');
 
   // on application exit:
   await driver.close()
