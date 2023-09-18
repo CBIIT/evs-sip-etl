@@ -28,7 +28,7 @@ const patchGdc = async () => {
           console.log(`Assigning NCIt code ${ncitCode} to property ${nodeName}.${propertyName}...`);
 
           const result = await session.run(
-            'MATCH (p:property) MATCH (p)<--(n:node) WHERE n.handle=$nodeName AND p.handle=$propertyName SET p.ncit_code=$ncitCode RETURN p.handle, p.ncitCode, n.handle;',
+            'MATCH (p:property) MATCH (p)<--(n:node) WHERE n.handle=$nodeName AND p.handle=$propertyName SET p.ncit_code=$ncitCode RETURN p.handle, p.ncit_code, n.handle;',
             {
               ncitCode: ncitCode,
               nodeName: nodeName,
