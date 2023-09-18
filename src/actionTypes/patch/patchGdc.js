@@ -39,7 +39,7 @@ const patchGdc = async () => {
 
           console.log(`Assigned NCIt code ${record.get('p.ncit_code')} to property ${record.get('n.handle')}.${record.get('p.handle')}`);
         } finally {
-          await session.close()
+          await session.close();
         }
       }
     }
@@ -48,7 +48,7 @@ const patchGdc = async () => {
   console.log('Finished patching NCIt codes');
 
   // on application exit:
-  await driver.close()
+  await driver.close();
 
   return;
 };
