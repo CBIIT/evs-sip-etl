@@ -1,4 +1,5 @@
 import ActionType from '../ActionType.js';
+import patchCtdc from './patchCtdc.js';
 import patchGdc from './patchGdc.js';
 
 /**
@@ -6,7 +7,7 @@ import patchGdc from './patchGdc.js';
  * 
  * @property {Object} actions A map of action names to action functions
  */
-export default class GdcPatcher extends ActionType {
+export default class Patcher extends ActionType {
   /**
    * Constructor
    */
@@ -14,6 +15,7 @@ export default class GdcPatcher extends ActionType {
     super();
 
     this._actions = {
+      ctdc: patchCtdc,
       gdc: patchGdc,
     };
   };
