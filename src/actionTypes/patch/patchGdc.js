@@ -25,7 +25,7 @@ const patchGdc = async () => {
         const session = driver.session();
 
         try {
-          console.log(`Assigning NCIt code ${ncitCode} to ${nodeName}.${propertyName}...`);
+          console.log(`Assigning NCIt code ${ncitCode} to property ${nodeName}.${propertyName}...`);
 
           const result = await session.run(
             'MATCH (p:property) MATCH (p)<--(n:node) WHERE n.handle=$nodeName AND p.handle=$propertyName SET p.ncit_code=$ncitCode RETURN p.handle, p.ncitCode, n.handle;',
@@ -37,7 +37,7 @@ const patchGdc = async () => {
           );
           const record = result.records[0];
 
-          console.log(`Assigned NCIt code ${record.get('p.ncitCode')} to ${record.get('n.handle')}.${record.get('p.handle')}`);
+          console.log(`Assigned NCIt code ${record.get('p.ncit_code')} to property ${record.get('n.handle')}.${record.get('p.handle')}`);
         } finally {
           await session.close()
         }
