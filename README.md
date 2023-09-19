@@ -70,6 +70,9 @@ Then, from `gdc-model/model-desc`, run
 
     load-mdf.py --handle GDC --user <user> --passw <passw> --bolt bolt://<host> --commit test --put gdc-model.yaml gdc-model-props.yaml gdc-model-terms.yaml
 
+When doing this in `icdc-model-tool/model-desc`, you may run into an issue with invalid URLs in the `Type` field of properties in the `icdc-model-props.yml` file.
+If so, then just replace those URLs with `TBD`, save the file, and then run the command above.
+
 ## Project Structure
 
 `index.js` is the ingress point for `src/main.js`.
