@@ -91,6 +91,11 @@ export default class JsonPatcher {
   async _patchNode(ncitCode, nodeName) {
     const session = this._driver.session();
 
+    if (!ncitCode) {
+      console.log(`No NCIt code for node ${nodeName}`);
+      return;
+    }
+
     try {
       console.log(`Assigning NCIt code ${ncitCode} to node "${nodeName}"...`);
 
@@ -110,6 +115,11 @@ export default class JsonPatcher {
       );
       const record = result.records[0];
 
+      if (!record) {
+        console.log(`Couldn't find node ${nodeName}!`);
+        return;
+      }
+
       console.log(`Assigned NCIt code ${record.get('n.ncit_code')} to node ${record.get('n.handle')}`);
     } finally {
       await session.close();
@@ -124,6 +134,11 @@ export default class JsonPatcher {
    */
   async _patchProperty(ncitCode, nodeName, propertyName) {
     const session = this._driver.session();
+
+    if (!ncitCode) {
+      console.log(`No NCIt code for property ${nodeName}.${propertyName}`);
+      return;
+    }
 
     try {
       console.log(`Assigning NCIt code ${ncitCode} to property ${nodeName}.${propertyName}...`);
@@ -147,6 +162,11 @@ export default class JsonPatcher {
       );
       const record = result.records[0];
 
+      if (!record) {
+        console.log(`Couldn't find property ${nodeName}.${propertyName}!`);
+        return;
+      }
+
       console.log(`Assigned NCIt code ${record.get('p.ncit_code')} to property ${record.get('n.handle')}.${record.get('p.handle')}`);
     } finally {
       await session.close();
@@ -162,6 +182,11 @@ export default class JsonPatcher {
    */
   async _patchValue(ncitCode, nodeName, propertyName, valueName) {
     const session = this._driver.session();
+
+    if (!ncitCode) {
+      console.log(`No NCIt code for value ${nodeName}.${propertyName}.${valueName}`);
+      return;
+    }
 
     try {
       console.log(`Assigning NCIt code ${ncitCode} to value ${nodeName}.${propertyName}.${valueName}...`);
@@ -188,6 +213,11 @@ export default class JsonPatcher {
         }
       );
       const record = result.records[0];
+
+      if (!record) {
+        console.log(`Couldn't find value ${nodeName}.${propertyName}.${valueName}!`);
+        return;
+      }
 
       console.log(`Assigned NCIt code ${record.get('v.ncit_code')} to value ${record.get('n.handle')}.${record.get('p.handle')}.${record.get('v.value')}`);
     } finally {

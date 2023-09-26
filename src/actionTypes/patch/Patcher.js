@@ -1,5 +1,6 @@
 import ActionType from '../ActionType.js';
 import patchCtdc from './patchCtdc.js';
+import patchIcdc from './patchIcdc.js';
 import patchGdc from './patchGdc.js';
 
 /**
@@ -17,6 +18,7 @@ export default class Patcher extends ActionType {
     this._actions = {
       ctdc: patchCtdc,
       gdc: patchGdc,
+      icdc: patchIcdc,
     };
   };
 };
