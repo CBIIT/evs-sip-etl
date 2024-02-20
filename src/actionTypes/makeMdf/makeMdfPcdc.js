@@ -8,7 +8,7 @@ const outputDir = process.env.OUTPUT_DIR ?? 'output';
 
 const makeMdfPcdc = async () => {
   const nodes = {};
-  const rows = generateRows(`${inputDir}/PCDC_Terminology.xls`);
+  const rows = generateRows(`${inputDir}/PCDC_Terminology.xlsx`);
   let lastPropName = '';
 
   for (const row of rows) {
@@ -129,12 +129,13 @@ const transformToPropMap = async (map) => {
 
         // If the type is `code`, then Type should be a list of permissible values instead
         if (prop.type === 'code' && Object.keys(prop.vals).length) {
-          newProp.Type = Object.keys(prop.vals);
+          newProp.Enum = Object.keys(prop.vals);
+          delete newProp.Type;
         }
 
         // Only save the property if it has a type
         // TODO handle problematic types through the error handler
-        if (newProp.Type) {
+        if (newProp.Type || newProp.Enum) {
           newMap.PropDefinitions[`${category}.${nodeName}.${propName}`] = newProp;
         }
       }
