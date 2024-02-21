@@ -87,7 +87,9 @@ const transformToNodeMap = async (map) => {
     // Build list of nodes
     for (const nodeName in map[category]) {
       const node = {
-        Category: category,
+        Tags: {
+          Category: category
+        },
         Props: [],
       };
 
