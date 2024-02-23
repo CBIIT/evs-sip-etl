@@ -14,7 +14,7 @@ const makeMdfPcdc = async () => {
   for (const row of rows) {
     const category = row.Project;
     const nodeName = formatName(row['PCDC Table PT']);
-    const propName = formatName(row['NCIt PT']);
+    let propName = row['PCDC PT'];
     const propType = row['Has PCDC Data Type PT']?.toLowerCase();
     const propDesc = row['NCIt Definition'];
 
@@ -40,6 +40,9 @@ const makeMdfPcdc = async () => {
       */},
       }
 
+      // Formating property name 
+      propName = formatName(propName);
+      
       // Store the prop
       nodes[category][nodeName][propName] = prop;
 
@@ -67,8 +70,8 @@ const makeMdfPcdc = async () => {
   // Transform and dump to YAML file
   const modelDescription = await transformToNodeMap(nodes);
   const propDefinitions = await transformToPropMap(nodes);
-  await writeYamlFile(modelDescription, `${outputDir}/pcdc-model-file.yaml`);
-  await writeYamlFile(propDefinitions, `${outputDir}/pcdc-model-properties-file.yaml`);
+  await writeYamlFile(modelDescription, `${outputDir}/pcdc-model.yaml`);
+  await writeYamlFile(propDefinitions, `${outputDir}/pcdc-model-properties.yaml`);
 };
 
 /**
