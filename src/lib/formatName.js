@@ -11,6 +11,9 @@ const formatName = (name) => {
     return name;
   }
 
+  // Remove " Table" from the end of node string
+  name = name.replace(/ Table$/, '');
+
   // Replace leading non-alphabetical or non-underscore characters with an underscore
   name = name.replaceAll(/^[^A-Za-z_]+/g, '_');
 
