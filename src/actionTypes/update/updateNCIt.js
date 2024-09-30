@@ -7,7 +7,7 @@ const neo4jUser = process.env.NEO4J_USER;
 const neo4jPass = process.env.NEO4J_PASS;
 const driver = neo4j.driver(neo4jUri, neo4j.auth.basic(neo4jUser, neo4jPass));
 
-const ncitUrl = process.env.NCIT_URL;
+const ncitUrl = process.env.NCIT_URL_LIST;
 
 const logger = new Logger();
 
@@ -18,14 +18,20 @@ const logger = new Logger();
 const updateNCIt = async () => {
   console.log("Updating NCIt codes...");
 
-  const ncitCodes = await getAllNCItcodes();
 
-  for (let [index, ncitCode] of ncitCodes.entries()) {
-    const url = ncitUrl + ncitCode;
+  const ncitCodes = await getAllNCItcodes();
+  const ncitCodesLength = ncitCodes.length;
+  const ncitCodesBatchLength = 100;
+
+  //loop through all NCIt codes by 50 to the end of the list
+  for (let index = 0; index < ncitCodes.length; index += ncitCodesBatchLength) {
+    const ncitCodesBatch = ncitCodes.slice(index, index + ncitCodesBatchLength);
+
+    const url = ncitUrl + ncitCodesBatch.toString();
 
     const NCItData = await fetchNCIt(url);
 
-    await updateNCItcode(NCItData, index);
+    await updateNCItcodes(NCItData, ncitCodesLength, index);
   }
 
   console.log("Finished NCIt codes synonyms updates");
@@ -80,40 +86,45 @@ async function fetchNCIt(apiUrl) {
   }
 }
 
-const updateNCItcode = async (NCItData, index) => {
+const updateNCItcodes = async (NCItData, ncitCodesLength, ncitCodesIndex) => {
   const session = driver.session();
+  let logString = "Updating NCIt codes synonyms...\n";
 
-  const ncitCode = NCItData.code;
-  const ncitName = NCItData.name;
-  const ncitDefinitions = filterSource(NCItData.definitions);
-  const ncitSynonyms = filterSource(NCItData.synonyms);
+  for(let i = 0; i < NCItData.length; i++) {
+    const ncitCode = NCItData[i].code;
+    const ncitName = NCItData[i].name;
+    const ncitDefinitions = filterSource(NCItData[i].definitions);
+    const ncitSynonyms = filterSource(NCItData[i].synonyms);
 
-  try {
-    const result = await session.run(
-      "MATCH (c:ncitcode) WHERE c.ncit_code=$ncitCode SET c.ncit_pt=$ncitName, c.ncit_synonyms=$ncitSynonyms, c.ncit_definitions=$ncitDefinitions RETURN c.ncit_code, c.ncit_pt;",
-      {
-        ncitCode: ncitCode,
-        ncitName: ncitName,
-        ncitSynonyms: ncitSynonyms,
-        ncitDefinitions: ncitDefinitions,
-      }
-    );
-    const record = result.records[0];
+    try {
+      const result = await session.run(
+        "MATCH (c:ncitcode) WHERE c.ncit_code=$ncitCode SET c.ncit_pt=$ncitName, c.ncit_synonyms=$ncitSynonyms, c.ncit_definitions=$ncitDefinitions RETURN c.ncit_code, c.ncit_pt;",
+        {
+          ncitCode: ncitCode,
+          ncitName: ncitName,
+          ncitSynonyms: ncitSynonyms,
+          ncitDefinitions: ncitDefinitions,
+        }
+      );
+      const record = result.records[0];
 
-    console.log(
-      `Updared ${index} NCIt code ${record.get("c.ncit_code")} synonyms`
-    );
-    logger.log(
-      `Updared ${index} NCIt code ${record.get("c.ncit_code")} synonyms`
-    );
-  } catch (error) {
-    // Log any errors that occur during the fetch
-    console.log("Error NCIt code:", ncitCode);
-    console.error("Error Neo4j SET data:", error);
-    logger.log("Error SET:" + ncitCode);
-  } finally {
-    await session.close();
+      ncitCodesIndex++;
+
+      logString += `Updated ${ncitCodesIndex} NCIt codes of ${ncitCodesLength} - ${record.get("c.ncit_code")} synonyms\n`;
+
+    } catch (error) {
+      // Log any errors that occur during the fetch
+      console.log("Error NCIt code:", ncitCode);
+      console.error("Error Neo4j SET data:", error);
+      logger.log("Error SET:" + ncitCode);
+    }
   }
+
+  console.log(logString);
+  logger.log(logString);
+
+  //close seesion
+  await session.close();
 
   return;
 };
